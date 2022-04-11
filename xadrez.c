@@ -2,6 +2,10 @@
 #include<string.h>
 #include<stdlib.h>
 #include<ctype.h>
+#include<unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
 typedef struct 
 {
     char nome[30];
@@ -82,34 +86,42 @@ void printTab(char ** tab)
 {
     int i;
     int j;
-
-    for(i = 0; i < 10; i++)
-    {   if(i == 0 || i == 9)
-            printf("  ");
-        for(j = 0; j < 10; j++)
-        {
+    int id;
+    id = fork();
+    if(id == 0)
+        execl("/usr/bin/clear","",NULL);
+    else
+    {
+        wait(NULL);
+        for(i = 0; i < 10; i++)
+        {   
             if(i == 0 || i == 9)
-                printf("\e[1m\e[31m\e[47m%c \e[0m",tab[i][j]);
-            else if(j == 0 || j == 9)
-                printf("\e[1m\e[31m\e[47m %c \e[0m",tab[i][j]);
-            else if(tab[i][j] != 0)
-                if(isupper(tab[i][j]))
-                    if((i + j) % 2 == 0)
-                        printf("\e[1m\e[43m\e[34m%c \e[0m",tab[i][j]);
+                printf("  ");
+            for(j = 0; j < 10; j++)
+            {
+                if(i == 0 || i == 9)
+                    printf("\e[1m\e[31m\e[47m%c \e[0m",tab[i][j]);
+                else if(j == 0 || j == 9)
+                    printf("\e[1m\e[31m\e[47m %c \e[0m",tab[i][j]);
+                else if(tab[i][j] != 0)
+                    if(isupper(tab[i][j]))
+                        if((i + j) % 2 == 0)
+                            printf("\e[1m\e[43m\e[34m%c \e[0m",tab[i][j]);
+                        else
+                            printf("\e[1m\e[47m\e[34m%c \e[0m",tab[i][j]);
+                    else if(islower(tab[i][j]))
+                        if((i + j) % 2 == 0)
+                            printf("\e[1m\e[43m\e[30m%c \e[0m",tab[i][j]);
+                        else
+                            printf("\e[1m\e[47m\e[30m%c \e[0m",tab[i][j]);
                     else
-                        printf("\e[1m\e[47m\e[34m%c \e[0m",tab[i][j]);
-                else if(islower(tab[i][j]))
-                    if((i + j) % 2 == 0)
-                        printf("\e[1m\e[43m\e[30m%c \e[0m",tab[i][j]);
-                    else
-                        printf("\e[1m\e[47m\e[30m%c \e[0m",tab[i][j]);
-                else
-                    if((i + j) % 2 == 0)
-                        printf("\e[1m\e[43m\e[33m\e[8m%c \e[0m",tab[i][j]);
-                    else
-                        printf("\e[1m\e[47m\e[8m%c \e[0m",tab[i][j]);
+                        if((i + j) % 2 == 0)
+                            printf("\e[1m\e[43m\e[33m\e[8m%c \e[0m",tab[i][j]);
+                        else
+                            printf("\e[1m\e[47m\e[8m%c \e[0m",tab[i][j]);
+            }
+            printf("\n");
         }
-        printf("\n");
     }
 }
 
@@ -126,7 +138,6 @@ void iniciarJogo(char  **tab,char **jogadas,char *jogada)
     printf("Digite o nome do jogador que vai ficar com as peças pretas: ");
     scanf("%s",jogadorPreta.nome);
     jogadorPreta.nJogadas = 0;
-
     while(flag)
     {
         printTab(tab);
